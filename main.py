@@ -29,4 +29,4 @@ def preprocess_data(df):
     df["FamilySize"] = df["SibSp"] + df["Parch"]
     df["IsAlone"] = np.where(df["FamilySize"] == 0, 1, 0)
     df["FairBin"] = pd.qcut(df["Fare"], 4, labels=False)
-    df["AgeRange"] = pd.cut(df["Age"], bins=[0, 12, 20, 40, 60, np.inf],labels=False)
+    df["AgeRange"] = pd.cut(df["Age"], bins=[0, 12, 20, 40, 60, np.inf],labels=False);
