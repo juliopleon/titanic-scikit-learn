@@ -25,7 +25,7 @@ def preprocess_data(df):
     # Convert gender
     df["Sex"] = df["Sex"].map({'male':1,'female':0})
 
-    # Feature Engineering!
+    # Feature Engineering
     df["FamilySize"] = df["SibSp"] + df["Parch"]
     df["IsAlone"] = np.where(df["FamilySize"] == 0, 1, 0)
     df["FairBin"] = pd.qcut(df["Fare"], 4, labels=False)
