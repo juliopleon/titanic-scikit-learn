@@ -32,3 +32,13 @@ def preprocess_data(df):
     df["AgeRange"] = pd.cut(df["Age"], bins=[0, 12, 20, 40, 60, np.inf],labels=False)
 
     return df
+
+
+# Fill in missing ages
+def fill_missing_ages(df):
+    age_fill_map = {}
+    for pclass in df["Pclass"].unique():
+        if pclass not in age_fill_map:
+            age_fill_map[pclass] = df[df["Pclass"] == pclass]["Age"].median()
+
+    df["Age"] = df.apply(lambda row: age_fill_map[row["Pclass"]] if pd.isnull(row["Age"]) else row["Age"],axis=1)
