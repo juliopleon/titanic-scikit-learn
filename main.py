@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
+
 # Visualization
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -21,6 +22,7 @@ def preprocess_data(df):
 
     df["Embarked"].fillna("S", inplace=True)
     df.drop(columns=["Embarked"], inplace=True)
+    
 
     fill_missing_ages(df)
 
@@ -32,6 +34,7 @@ def preprocess_data(df):
     df["IsAlone"] = np.where(df["FamilySize"] == 0, 1, 0)
     df["FairBin"] = pd.qcut(df["Fare"], 4, labels=False)
     df["AgeRange"] = pd.cut(df["Age"], bins=[0, 12, 20, 40, 60, np.inf],labels=False)
+    df = df.dropna() #not getting ytrain and not working100%
 
     return df
 
@@ -63,8 +66,8 @@ X_test = scaler.transform(X_test)
 def tune_model(X_train, y_train):
     param_grid = {
         "n_neighbors":range(1,21),
-        "metrics" : ["euclidean", "manhattan", "minkowski"],
-        "weights" : ["uniform", "distance"]
+        "metric" : ["euclidean", "manhattan", "minkowski"],
+        "weights" : ["uniform","distance"]
     }
 
     model = KNeighborsClassifier()
@@ -80,4 +83,14 @@ best_model = tune_model(X_train, y_train)
 # Predictions and evaluations
 def evaluate_model(model, X_test, y_test):
     prediction = model.predict(X_test)
+    accuracy = accuracy_score(y_test, prediction)
+    matrix = confusion_matrix(y_test, prediction)
+    return accuracy, matrix
+
+accuracy, matrix = evaluate_model(best_model, X_test, y_test)
+
+print(f'Accuracy: {accuracy*100:.2f}%')
+print(f'Confusion Matrix:')
+print(matrix)
+
 
