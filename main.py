@@ -20,11 +20,14 @@ print(data.isnull().sum())
 def preprocess_data(df):
     df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"], inplace=True)
 
-    df["Embarked"].fillna("S", inplace=True)
+    df["Embarked"].fillna("S")
     df.drop(columns=["Embarked"], inplace=True)
     
 
     fill_missing_ages(df)
+
+    # Fill missing fares
+    df["Fare"].fillna(df["Fare"].median())
 
     # Convert gender
     df["Sex"] = df["Sex"].map({'male':1,'female':0})
@@ -33,7 +36,7 @@ def preprocess_data(df):
     df["FamilySize"] = df["SibSp"] + df["Parch"]
     df["IsAlone"] = np.where(df["FamilySize"] == 0, 1, 0)
     df["FairBin"] = pd.qcut(df["Fare"], 4, labels=False)
-    df["AgeRange"] = pd.cut(df["Age"], bins=[0, 12, 20, 40, 60, np.inf],labels=False)
+    df["AgeBin"] = pd.cut(df["Age"].fillna(30), bins=[0, 12, 20, 40, 60, np.inf],labels=False)
     df = df.dropna() #not getting ytrain and not working100%
 
     return df
@@ -51,7 +54,7 @@ def fill_missing_ages(df):
 data = preprocess_data(data)
 
 # Create Features / Target Variables (Make Flashcards)
-X = data.drop(columns={"Survived"})
+X = data.drop(columns=["Survived"])
 y = data["Survived"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
