@@ -24,7 +24,7 @@ def preprocess_data(df):
     df.drop(columns=["Embarked"], inplace=True)
     
 
-    fill_missing_ages(df);
+    fill_missing_ages(df)
 
     # Fill missing fares
     df["Fare"].fillna(df["Fare"].median())
